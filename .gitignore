@@ -31,3 +31,28 @@ _explore_tmp.py
 *.sqlite3-wal
 *.sqlite3-journal
 *.db
+
+# Added 2026-09-28 after a `git add .` audit: secrets, local data and build output
+# More key/cert formats and secrets
+*.p12
+*.pem
+*.key
+*.jks
+*.keystore
+pfx_password*
+.env
+.env.*
+# Local agent/editor state, envs, temp
+.claude/
+.vscode/
+.idea/
+.venv/
+venv/
+*.tmp
+*.part
+*.bak
+# Chat exports / staging, in case an output dir is ever pointed here
+*_chat_live_exports/
+staging/
+.export_state.json
+watcher.status.json
