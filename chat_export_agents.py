@@ -77,6 +77,7 @@ CONTINUE_EXPORTER = TOOLS / "export_continue_chats_live.py"
 PI_EXPORTER = TOOLS / "export_pi_chats_live.py"
 QWEN_EXPORTER = TOOLS / "export_qwen_chats_live.py"
 CURSOR_EXPORTER = TOOLS / "export_cursor_chats_live.py"
+DEEPSEEK_HARNESS_EXPORTER = TOOLS / "export_deepseek_harness_chats_live.py"
 # Shared watcher status for the combined Codex+Claude scheduled task
 CODEX_CLAUDE_STATUS = HOME / "codex_chat_live_exports" / "watcher.status.json"
 CODEX_CLAUDE_LOG = HOME / "codex_chat_live_exports" / "watcher.log"
@@ -364,6 +365,23 @@ AGENTS: list[AgentSpec] = [
         task_name="Qwen Code Chat Export Watcher",
         layout="generic",
         notes="Qwen Code sessions under ~/.qwen/projects/<cwd>/chats",
+    ),
+    AgentSpec(
+        id="deepseek-harness",
+        name="DeepSeek Harness",
+        short="DSH",
+        color="#4d6bfe",
+        output_dir=HOME / "deepseek_harness_chat_live_exports",
+        source_home=HOME / ".dsh",
+        exporter=DEEPSEEK_HARNESS_EXPORTER,
+        export_args=("--once",),
+        task_name="DeepSeek Harness Chat Export Watcher",
+        layout="generic",
+        notes=(
+            "DeepSeek Harness sessions under ~/.dsh/sessions "
+            "(zstd-compressed JSONL event logs; needs `pip install zstandard` "
+            "or node >= 23 on PATH)"
+        ),
     ),
 ]
 

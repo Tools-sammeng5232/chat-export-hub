@@ -27,6 +27,7 @@ Unified desktop app for **live chat history exports** across multiple AI agents.
 | Pi Agent | `~/pi_chat_live_exports` | `~/.pi/agent/sessions` (Pi Chat Export Watcher) |
 | Qwen Code | `~/qwen_chat_live_exports` | `~/.qwen/projects/<cwd>/chats` (Qwen Code Chat Export Watcher) |
 | Cursor | `~/cursor_chat_live_exports` | Cursor IDE `User/globalStorage/state.vscdb` composers + `workspaceStorage` prompt history + cursor-agent CLI `~/.cursor` (Cursor Chat Export Watcher) |
+| DeepSeek Harness | `~/deepseek_harness_chat_live_exports` | `~/.dsh/sessions` zstd JSONL event logs (DeepSeek Harness Chat Export Watcher) |
 
 ## Watcher tasks
 
@@ -44,6 +45,7 @@ Scheduled tasks keep exports live (logon trigger + 5-minute revival, 30s scan in
 | Pi Chat Export Watcher | `install_pi_chat_export_task.ps1` |
 | Qwen Code Chat Export Watcher | `install_qwen_chat_export_task.ps1` |
 | Cursor Chat Export Watcher | `install_cursor_chat_export_task.ps1` |
+| DeepSeek Harness Chat Export Watcher | `install_deepseek_harness_chat_export_task.ps1` |
 
 Agents without a watcher task export only when triggered from the hub UI.
 
@@ -143,6 +145,7 @@ No UI code changes required for simple agents that share the same state layout.
 - `export_pi_chats_live.py` — pi agent
 - `export_qwen_chats_live.py` — Qwen Code CLI
 - `export_cursor_chats_live.py` — Cursor (IDE composer/bubble store, workspace `aiService` history, cursor-agent CLI sessions and agent transcripts)
+- `export_deepseek_harness_chats_live.py` — DeepSeek Harness (`~/.dsh/sessions/**/session.v*.jsonl.zstd` append-only zstd-framed JSONL event logs; decodes via `zstandard` or node ≥ 23 fallback, exports user/assistant/reasoning/tool/todo/approval/goal/subagent events)
 - `split_claude_code_exports.py` — Claude Code CLI / GUI splitter (post-processes the combined exporter's output by session entrypoint: `cli` / `sdk-cli` / `claude-vscode` stay CLI, `claude-desktop` becomes GUI)
 - `grok_export_monitor.py` — Grok export monitor
 - `install_*_chat_export_task.ps1` — scheduled watcher installers
