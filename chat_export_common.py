@@ -796,12 +796,59 @@ _vbox_vm_cache: tuple[float, list[tuple[str, bool]]] = (0.0, [])
 _ssh_hosts_cache: tuple[float, dict[str, dict[str, str]]] = (0.0, {})
 
 
+def _vbox_vm_processes_running() -> bool:
+    """True while any VirtualBox VM process exists (cheap; no COM involved).
+
+    Guard added 2026-10-12: stops the exporters from launching VBoxManage when
+    no VM is actually running, which kept resurrecting the VBoxSDS/VBoxSVC
+    background service chain. Set CHAT_EXPORT_VBOX_FORCE=1 to restore the old
+    always-probe behavior.
+    """
+    if os.environ.get("CHAT_EXPORT_VBOX_FORCE"):
+        return True
+    try:
+        import ctypes
+        import ctypes.wintypes as wt
+
+        psapi = ctypes.WinDLL("psapi")
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        pids = (ctypes.c_ulong * 2048)()
+        needed = ctypes.c_ulong()
+        if not psapi.EnumProcesses(pids, ctypes.sizeof(pids), ctypes.byref(needed)):
+            return True
+        if needed.value >= ctypes.sizeof(pids):
+            return True
+        wanted = {"virtualboxvm.exe", "vboxheadless.exe"}
+        count = int(needed.value) // ctypes.sizeof(ctypes.c_ulong)
+        for i in range(count):
+            pid = pids[i]
+            if pid == 0:
+                continue
+            handle = kernel32.OpenProcess(0x1000, False, pid)
+            if not handle:
+                continue
+            try:
+                buf = ctypes.create_unicode_buffer(1024)
+                size = wt.DWORD(1024)
+                if kernel32.QueryFullProcessImageNameW(handle, 0, buf, ctypes.byref(size)):
+                    if os.path.basename(buf.value).lower() in wanted:
+                        return True
+            finally:
+                kernel32.CloseHandle(handle)
+    except Exception:
+        return True
+    return False
+
+
 def vbox_vms() -> list[tuple[str, bool]]:
     """(name, running) for every registered VirtualBox VM, cached 60s."""
     global _vbox_vm_cache
     now = time.time()
     if now - _vbox_vm_cache[0] < 60.0:
         return _vbox_vm_cache[1]
+    if not _vbox_vm_processes_running():
+        _vbox_vm_cache = (now, [])
+        return []
     result: list[tuple[str, bool]] = []
     exe = os.environ.get("CHAT_EXPORT_VBOXMANAGE") or next(
         (p for p in VBOX_MANAGE_CANDIDATES if Path(p).is_file()), None

@@ -56,3 +56,5 @@ venv/
 staging/
 .export_state.json
 watcher.status.json
+
+*.bak-*
