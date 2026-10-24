@@ -28,6 +28,9 @@ Unified desktop app for **live chat history exports** across multiple AI agents.
 | Qwen Code | `~/qwen_chat_live_exports` | `~/.qwen/projects/<cwd>/chats` (Qwen Code Chat Export Watcher) |
 | Cursor | `~/cursor_chat_live_exports` | Cursor IDE `User/globalStorage/state.vscdb` composers + `workspaceStorage` prompt history + cursor-agent CLI `~/.cursor` (Cursor Chat Export Watcher) |
 | DeepSeek Harness | `~/deepseek_harness_chat_live_exports` | `~/.dsh/sessions` zstd JSONL event logs (DeepSeek Harness Chat Export Watcher) |
+| ZCode | `~/zcode_chat_live_exports` | `~/.zcode/cli/db/db.sqlite` session/message/part store (ZCode Chat Export Watcher) |
+| Qoder | `~/qoder_chat_live_exports` | `%APPDATA%/com.qoder.app.stable/main.sqlite` `chat_sessions` (Qoder Chat Export Watcher) |
+| Qoder CN | `~/qoder_cn_chat_live_exports` | `%APPDATA%/com.qodercn.app.stable/main.sqlite` `chat_sessions` (Qoder CN Chat Export Watcher) |
 
 ## Watcher tasks
 
@@ -46,6 +49,9 @@ Scheduled tasks keep exports live (logon trigger + 5-minute revival, 30s scan in
 | Qwen Code Chat Export Watcher | `install_qwen_chat_export_task.ps1` |
 | Cursor Chat Export Watcher | `install_cursor_chat_export_task.ps1` |
 | DeepSeek Harness Chat Export Watcher | `install_deepseek_harness_chat_export_task.ps1` |
+| ZCode Chat Export Watcher | `install_zcode_chat_export_task.ps1` |
+| Qoder Chat Export Watcher | `install_qoder_chat_export_task.ps1 -Edition intl` |
+| Qoder CN Chat Export Watcher | `install_qoder_chat_export_task.ps1 -Edition cn` |
 
 Agents without a watcher task export only when triggered from the hub UI.
 
@@ -146,6 +152,8 @@ No UI code changes required for simple agents that share the same state layout.
 - `export_qwen_chats_live.py` — Qwen Code CLI
 - `export_cursor_chats_live.py` — Cursor (IDE composer/bubble store, workspace `aiService` history, cursor-agent CLI sessions and agent transcripts)
 - `export_deepseek_harness_chats_live.py` — DeepSeek Harness (`~/.dsh/sessions/**/session.v*.jsonl.zstd` append-only zstd-framed JSONL event logs; decodes via `zstandard` or node ≥ 23 fallback, exports user/assistant/reasoning/tool/todo/approval/goal/subagent events)
+- `export_zcode_chats_live.py` — ZCode CLI (`~/.zcode/cli/db/db.sqlite` session/message/part schema, same layout as OpenCode; skips hidden + system-reminder/todo-reminder traffic, plus WSL `~/.zcode` homes)
+- `export_qoder_chats_live.py` — Qoder / Qoder CN (`--edition intl|cn` reads `%APPDATA%/com.qoder.app.stable|com.qodercn.app.stable/main.sqlite`, `chat_sessions` + `chat_session_messages` payloads with text/thinking/tool parts)
 - `split_claude_code_exports.py` — Claude Code CLI / GUI splitter (post-processes the combined exporter's output by session entrypoint: `cli` / `sdk-cli` / `claude-vscode` stay CLI, `claude-desktop` becomes GUI)
 - `grok_export_monitor.py` — Grok export monitor
 - `install_*_chat_export_task.ps1` — scheduled watcher installers

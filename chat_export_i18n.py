@@ -219,6 +219,9 @@ AGENT_NAMES: dict[str, dict[str, str]] = {
     "trae-cn": {"en": "Trae CN", "zh": "Trae CN"},
     "qwencode": {"en": "Qwen Code", "zh": "Qwen Code"},
     "cursor": {"en": "Cursor", "zh": "Cursor"},
+    "zcode": {"en": "ZCode", "zh": "ZCode"},
+    "qoder": {"en": "Qoder", "zh": "Qoder"},
+    "qoder-cn": {"en": "Qoder CN", "zh": "Qoder CN"},
 }
 
 

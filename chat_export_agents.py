@@ -78,6 +78,8 @@ PI_EXPORTER = TOOLS / "export_pi_chats_live.py"
 QWEN_EXPORTER = TOOLS / "export_qwen_chats_live.py"
 CURSOR_EXPORTER = TOOLS / "export_cursor_chats_live.py"
 DEEPSEEK_HARNESS_EXPORTER = TOOLS / "export_deepseek_harness_chats_live.py"
+ZCODE_EXPORTER = TOOLS / "export_zcode_chats_live.py"
+QODER_EXPORTER = TOOLS / "export_qoder_chats_live.py"
 # Shared watcher status for the combined Codex+Claude scheduled task
 CODEX_CLAUDE_STATUS = HOME / "codex_chat_live_exports" / "watcher.status.json"
 CODEX_CLAUDE_LOG = HOME / "codex_chat_live_exports" / "watcher.log"
@@ -382,6 +384,45 @@ AGENTS: list[AgentSpec] = [
             "(zstd-compressed JSONL event logs; needs `pip install zstandard` "
             "or node >= 23 on PATH)"
         ),
+    ),
+    AgentSpec(
+        id="zcode",
+        name="ZCode",
+        short="ZCode",
+        color="#0ea5e9",
+        output_dir=HOME / "zcode_chat_live_exports",
+        source_home=HOME / ".zcode",
+        exporter=ZCODE_EXPORTER,
+        export_args=("--once",),
+        task_name="ZCode Chat Export Watcher",
+        layout="generic",
+        notes="ZCode CLI sessions in ~/.zcode/cli/db/db.sqlite (session/message/part)",
+    ),
+    AgentSpec(
+        id="qoder",
+        name="Qoder",
+        short="Qoder",
+        color="#f43f5e",
+        output_dir=HOME / "qoder_chat_live_exports",
+        source_home=HOME / ".qoder",
+        exporter=QODER_EXPORTER,
+        export_args=("--edition", "intl", "--once"),
+        task_name="Qoder Chat Export Watcher",
+        layout="generic",
+        notes="Qoder (international) chat_sessions in %APPDATA%/com.qoder.app.stable/main.sqlite",
+    ),
+    AgentSpec(
+        id="qoder-cn",
+        name="Qoder CN",
+        short="Qoder CN",
+        color="#be123c",
+        output_dir=HOME / "qoder_cn_chat_live_exports",
+        source_home=HOME / ".qoder",
+        exporter=QODER_EXPORTER,
+        export_args=("--edition", "cn", "--once"),
+        task_name="Qoder CN Chat Export Watcher",
+        layout="generic",
+        notes="Qoder CN chat_sessions in %APPDATA%/com.qodercn.app.stable/main.sqlite",
     ),
 ]
 
